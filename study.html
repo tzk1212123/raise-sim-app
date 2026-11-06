@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>raise-sim · repeated study</title>
+<link rel="stylesheet" href="static/compare.css">
+<link rel="stylesheet" href="static/study.css">
+</head>
+<body>
+<header>
+  <div class="brand"><b>raise-sim</b><span class="muted">repeated study · many runs per contestant → averages and uncertainty</span>
+    <span class="badge">SIMULATION</span></div>
+  <div class="links"><a href="about.html">about the experiment</a><a href="./">single comparison</a><a href="tour.html">tour</a><a href="expert.html">expert</a></div>
+</header>
+
+<div class="layout">
+  <aside>
+    <section class="panel">
+      <h3>Study setup</h3>
+      <div id="contestants" class="contestants"></div>
+      <div class="grid2">
+        <label>repeats per contestant<input id="repeats" type="number" value="10" min="1" max="200"></label>
+        <label>budget (tests)<input id="budget" type="number" value="15" min="5" max="60"></label>
+        <label>random starters<input id="ninit" type="number" value="3" min="0" max="10"></label>
+        <label>parallel runs<input id="workers" type="number" value="4" min="1" max="8"></label>
+      </div>
+      <label>simulated worlds<select id="worlds">
+        <option value="physics">one world (physics model)</option>
+        <option value="mixed">5 plausible worlds, rotated</option></select></label>
+      <label style="margin-top:10px">base seed <span class="seed-row"><input id="seed" type="number" value="0" disabled><span class="check-inline"><input type="checkbox" id="seed-random" checked>random</span></span></label>
+      <div class="row" style="margin-top:12px"><button id="start" class="dark">Run study</button><button id="stop" class="light">Stop</button></div>
+      <div id="estimate" class="muted" style="margin-top:8px"></div>
+    </section>
+    <section class="panel">
+      <h3>Progress</h3>
+      <div class="progress"><div id="bar"></div></div>
+      <div id="prog" class="muted">idle</div>
+      <div id="errors" class="errors"></div>
+      <div class="row" style="margin-top:10px"><a id="csv" class="light btnlink" href="/api/study/csv">Download CSV (all runs)</a></div>
+      <div id="saved" class="muted" style="margin-top:6px"></div>
+    </section>
+    <section class="panel">
+      <h3>How to read</h3>
+      <ul class="howto">
+        <li>Each repeat uses one seed for <b>all</b> contestants: same world, same starters, same noise. Differences come from decisions.</li>
+        <li><b>Success</b> = the final answer's true angle is on target (70.4–73.6°). Bracket = 95% interval.</li>
+        <li><b>Score</b> = 100 × desirability of the answer if on target, else 0. Best possible ≈ 97.</li>
+        <li><b>Tests to good</b> = first test that measured on target with score ≥ 90.</li>
+        <li>If two intervals overlap a lot, the difference may be luck. Add repeats.</li>
+      </ul>
+    </section>
+  </aside>
+
+  <main>
+    <section class="panel">
+      <div class="ph"><h3>Summary per contestant</h3><span class="muted" id="sum-sub"></span></div>
+      <div class="tablewrap"><table id="summary"></table></div>
+    </section>
+
+    <div class="charts">
+      <section class="panel"><h3>Success rate of final answer</h3><svg id="c-success" viewBox="0 0 520 240"></svg></section>
+      <section class="panel"><h3>Mean score of final answer</h3><svg id="c-score" viewBox="0 0 520 240"></svg></section>
+      <section class="panel"><h3>Tests until first good recipe (each dot = one repeat)</h3><svg id="c-ttg" viewBox="0 0 520 240"></svg></section>
+      <section class="panel"><h3>Average cost per campaign</h3><svg id="c-cost" viewBox="0 0 520 240"></svg></section>
+    </div>
+
+    <section class="panel">
+      <h3>Takeaways</h3>
+      <ol id="takeaways" class="findings"><li class="muted">Run a study to get conclusions backed by many runs.</li></ol>
+    </section>
+
+    <section class="panel">
+      <h3>All runs</h3>
+      <div class="tablewrap tall"><table id="runs"></table></div>
+    </section>
+  </main>
+</div>
+<div id="tooltip"></div>
+<script src="static/pyshim.js"></script>
+<script src="static/contestants.js"></script>
+<script src="static/study.js"></script>
+</body>
+</html>

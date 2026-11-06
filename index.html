@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>raise-sim · planner comparison</title>
+<link rel="stylesheet" href="static/compare.css">
+</head>
+<body>
+<header>
+  <div class="brand"><b>raise-sim</b><span class="muted">agentic wet-lab benchmark · SDS 94% + Tween 20 → 72° at minimum surfactant</span>
+    <span class="badge">SIMULATION</span></div>
+  <div class="links"><span id="rig-info" class="muted"></span><a href="about.html">about the experiment</a><a href="study.html"><b>repeated study</b></a><a href="tour.html">tour</a><a href="expert.html">expert</a></div>
+</header>
+
+<div class="layout">
+  <!-- left column -->
+  <aside>
+    <section class="panel">
+      <h3>Comparison</h3>
+      <div id="contestants" class="contestants"></div>
+      <div class="grid2">
+        <label>budget (tests)<input id="budget" type="number" value="15" min="5" max="60"></label>
+        <label>random starters<input id="ninit" type="number" value="3" min="1" max="10"></label>
+        <label>seed <span class="seed-row"><input id="seed" type="number" value="0" min="0" disabled><span class="check-inline"><input type="checkbox" id="seed-random" checked>random</span></span></label>
+        <label>speed<select id="speed"><option value="0.8">slow</option><option value="0.35" selected>normal</option><option value="0.05">fast</option><option value="0">instant</option></select></label>
+      </div>
+      <div class="row"><button id="start" class="dark">Start comparison</button><button id="stop" class="light">Stop</button></div>
+      <label class="check"><input type="checkbox" id="reveal"> show hidden ground truth on maps</label>
+    </section>
+
+    <section class="panel">
+      <h3>Manual experiment</h3>
+      <div class="grid2">
+        <label>SDS 94% (% w/v)<select id="m-sds"></select></label>
+        <label>Tween 20 (% w/v)<select id="m-tween"></select></label>
+      </div>
+      <div class="row"><button id="m-run" class="dark">Run experiment</button>
+        <label class="check-inline" style="margin:0"><input type="checkbox" id="m-anim-on" checked>animate</label></div>
+      <div id="m-out" class="m-out muted">—</div>
+    </section>
+
+    <section class="panel">
+      <h3>MHS devices</h3>
+      <div id="devices" class="devices"></div>
+    </section>
+  </aside>
+
+  <!-- right column -->
+  <main>
+    <div class="kpis">
+      <div class="kpi"><div class="k">best score</div><div class="v" id="k-best">–</div><div class="s" id="k-best-who"></div></div>
+      <div class="kpi"><div class="k">tests run</div><div class="v" id="k-tests">0</div><div class="s" id="k-tests-s"></div></div>
+      <div class="kpi"><div class="k">robot time</div><div class="v" id="k-time">0<small> min</small></div><div class="s">summed over contestants</div></div>
+      <div class="kpi"><div class="k">best possible</div><div class="v" id="k-star">–</div><div class="s" id="k-star-s">hidden optimum</div></div>
+    </div>
+
+    <div class="mid">
+      <section class="panel">
+        <div class="ph"><h3>Best on-target score so far</h3><span class="muted">each dot = one test · line = best score found up to that test · score ≥ 90 = good recipe</span></div>
+        <svg id="chart" viewBox="0 0 1000 330"></svg>
+      </section>
+      <section class="panel findings-panel">
+        <div><h3>Findings</h3>
+          <ol id="findings" class="findings"><li class="muted">Run a comparison to see the conclusions.</li></ol></div>
+        <div><h3>Tests needed to reach a good recipe</h3>
+          <svg id="bars" viewBox="0 0 420 200"></svg></div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <div class="ph"><h3>Where each contestant tested</h3><span class="muted">grid: Tween → · SDS ↑ · ○ = shared random starter · red box = final answer</span></div>
+      <div id="lanes" class="lanes"><div class="muted">Pick contestants and press Start comparison.</div></div>
+    </section>
+
+    <section class="panel" id="think-panel">
+      <div class="ph"><h3>LLM thinking process</h3><span class="muted">one entry per model turn: its reasoning, then the test it chose and the result</span></div>
+      <div id="think-tabs" class="think-tabs"></div>
+      <div id="timeline" class="timeline"><div class="muted">Add an LLM contestant to see how it reasons between tests.</div></div>
+    </section>
+
+    <div class="bottom">
+      <section class="panel">
+        <h3>Scoreboard</h3>
+        <table id="board"><thead><tr><th>#</th><th>contestant</th><th>answer (SDS / Tween)</th><th>true angle</th><th>score</th><th>re-test avg</th><th>tests</th><th>robot min</th></tr></thead><tbody></tbody></table>
+      </section>
+      <section class="panel">
+        <h3>Live log</h3>
+        <div id="log" class="log"></div>
+      </section>
+    </div>
+  </main>
+</div>
+<div id="m-anim-wrap" class="anim-modal" style="display:none">
+  <div class="anim-box">
+    <div class="anim-top"><b>One experiment, replayed from the robot's action log</b><button id="m-anim-close" class="light">close</button></div>
+    <svg id="m-anim" viewBox="0 0 640 380"></svg>
+    <div id="m-anim-cap" class="anim-cap"></div>
+  </div>
+</div>
+<div id="tooltip"></div>
+<script src="static/pyshim.js"></script>
+<script src="static/contestants.js"></script>
+<script src="static/anim.js"></script>
+<script src="static/compare.js"></script>
+</body>
+</html>

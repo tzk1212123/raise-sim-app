@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>raise-sim · about the experiment</title>
+<link rel="stylesheet" href="static/compare.css">
+<link rel="stylesheet" href="static/about.css">
+</head>
+<body>
+<header>
+  <div class="brand"><b>raise-sim</b><span class="muted">about the experiment and the simulator</span><span class="badge">SIMULATION</span></div>
+  <div class="links"><a href="./"><b>comparison</b></a><a href="study.html">repeated study</a><a href="tour.html">tour</a><a href="expert.html">expert</a></div>
+</header>
+
+<main class="about">
+  <nav class="toc">
+    <a href="#intro">1 · The experiment</a><a href="#process">2 · One test, step by step</a>
+    <a href="#sim">3 · How the simulator imitates it</a><a href="#bench">4 · How contestants are compared</a>
+  </nav>
+
+  <!-- 1 -->
+  <section id="intro" class="panel">
+    <h2>1 · The experiment: tuning how a liquid wets a surface</h2>
+    <div class="two">
+      <div>
+        <p>Place a small drop on a flat surface and look from the side. The angle between the drop's edge and the surface is the
+          <b>static contact angle</b>. A large angle means a round bead (poor wetting); a small angle means the drop spreads (good wetting).
+          Wettability matters for coatings, sprays, medical devices and textiles.</p>
+        <p>We dissolve two surfactants (soap-like molecules) in water:</p>
+        <ul>
+          <li><b>SDS 94%</b>: cheap, commercial-grade sodium dodecyl sulfate. On its own it spreads the drop strongly (≈ 61°).</li>
+          <li><b>Tween 20</b>: a mild non-ionic surfactant. On its own the drop stays rounder (≈ 74–75°).</li>
+        </ul>
+        <p><b>Goal:</b> find the mixture whose contact angle is <b>72°</b> (the performance of expensive 99%-pure SDS),
+          while using <b>as little total surfactant as possible</b>. Each ingredient can be set from 0.04 to 0.60 / 1.20 % w/v in
+          0.04 steps: <b>450 possible recipes</b>.</p>
+        <p class="muted">Task, numbers and protocol follow the RAISE self-driving lab (Nazeri et al., <i>Digital Discovery</i> 2026,
+          arXiv 2510.06546), which ran this campaign on an Opentrons OT-2 robot.</p>
+      </div>
+      <div class="drops">
+        <div class="dropcard"><svg viewBox="0 0 220 120" data-angle="101"></svg><b>101°</b><span>pure water</span></div>
+        <div class="dropcard"><svg viewBox="0 0 220 120" data-angle="75"></svg><b>75°</b><span>Tween 20 alone</span></div>
+        <div class="dropcard target"><svg viewBox="0 0 220 120" data-angle="72"></svg><b>72°</b><span>target</span></div>
+        <div class="dropcard"><svg viewBox="0 0 220 120" data-angle="61"></svg><b>61°</b><span>SDS 94% alone</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="process" class="panel">
+    <h2>2 · One test, step by step</h2>
+    <div class="two">
+      <ol class="steps-list">
+        <li><b>Calculate volumes</b> from the recipe and the stock concentrations (200 µL total).</li>
+        <li><b>Dispense</b> water, SDS stock and Tween stock into a fresh well, each with a fresh tip (P20 for ≤ 20 µL, P300 above).</li>
+        <li><b>Mix</b> by pipetting 100 µL up and down 10 times.</li>
+        <li><b>Place 3 droplets</b> of 3 µL on unused spots of a stepped imaging stage.</li>
+        <li><b>Pick up the camera</b> with the pipette mount, move beside each droplet, <b>wait 10 s</b>.</li>
+        <li><b>Capture</b> a side image and fit the droplet contour; on a failed detection, wait 5 s and retry once.</li>
+        <li><b>Report</b> the mean and spread of the three angles. ≈ 3–3.5 min per recipe; 90 spots = 30 recipes per batch, then a person resets the deck.</li>
+      </ol>
+      <div>
+        <div class="row" style="gap:8px;align-items:flex-end">
+          <label>SDS %<select id="a-sds"></select></label><label>Tween %<select id="a-tween"></select></label>
+          <button id="a-run" class="dark" style="flex:none">Watch the robot ▶</button>
+        </div>
+        <div class="anim-wrap"><svg id="a-anim" viewBox="0 0 640 380"></svg><div id="a-cap" class="anim-cap">Press "Watch the robot" to replay one simulated test from its device log.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section id="sim" class="panel">
+    <h2>3 · How the simulator imitates the experiment</h2>
+    <p>The simulator is a software copy of the robot and the chemistry. Planners talk to it exactly as they would talk to the real
+      robot: they send a recipe and get back three measured angles. Everything else is hidden from them.</p>
+    <table class="map">
+      <thead><tr><th>In the real lab</th><th>In the simulator</th><th>Where the numbers come from</th></tr></thead>
+      <tbody>
+        <tr><td>The liquid's true contact angle for each recipe</td><td><b>Hidden "true" surface</b> over all 450 recipes</td>
+          <td>Rebuilt from the RAISE paper's published figures (raw data is not public); a physics-based model (mixed micelles → surface adsorption → wetting) fitted to them, cross-checked by a second, data-only model</td></tr>
+        <tr><td>OT-2 robot, pipettes, tips, plate</td><td><b>Devices</b> with the same actions (pick tip, transfer, mix, place droplet…)</td>
+          <td>Opentrons P20 / P300 volume limits are enforced; pipetting error grows at small volumes; tips, wells and stocks are counted</td></tr>
+        <tr><td>Imaging stage and camera</td><td>2 stages × 5 levels × 9 spots; camera pick-up, positioning, capture</td>
+          <td>RAISE deck layout and protocol (10 s wait, one retry)</td></tr>
+        <tr><td>Measurement imperfection</td><td><b>Measurement model</b></td>
+          <td>Per-level offsets and ~0.55° scatter from RAISE water tests (Table S2); +~0.6° for surfactant solutions; 2% gross outliers; 3% failed detections</td></tr>
+        <tr><td>Time and people</td><td>Simulated clock; manual reset every 30 recipes</td>
+          <td>Per-step timings tuned to RAISE throughput (≈ 3 min per recipe); human reset time logged separately</td></tr>
+      </tbody>
+    </table>
+
+    <div class="two" style="margin-top:16px">
+      <div>
+        <h3>What a planner sees vs. what stays hidden</h3>
+        <div class="see">
+          <div class="box sees"><b>planner sees</b><ul><li>task description and limits</li><li>its own results: 3 droplet angles, mean ± SD, score</li><li>failures as missing values</li></ul></div>
+          <div class="box hidden"><b>hidden (used only for grading)</b><ul><li>true angle of every recipe</li><li>which readings were outliers</li><li>the best possible recipe</li></ul></div>
+        </div>
+        <p class="muted small">Because the simulator knows the truth, we can grade each planner's final answer exactly, something impossible in a real lab.</p>
+      </div>
+      <div>
+        <h3>The hidden true surface</h3>
+        <svg id="a-truth" viewBox="0 0 520 300"></svg>
+        <div class="muted small">Colour = true contact angle. White outline = good recipes (on target and thrifty). ★ = best recipe.</div>
+      </div>
+    </div>
+    <p class="muted small" style="margin-top:12px"><b>Limits:</b> stock concentrations, mixture volume and timings are assumptions until measured
+      in our lab; the model under-predicts angles in the low-SDS corner by up to ~3°. The simulator compares strategies fairly;
+      it does not predict exact lab numbers.</p>
+  </section>
+
+  <!-- 4 -->
+  <section id="bench" class="panel">
+    <h2>4 · How contestants are compared</h2>
+    <div class="cards">
+      <div class="c"><b>Same lab</b><span>Every contestant gets its own copy of the same simulated world, the same random starter tests and the same noise.</span></div>
+      <div class="c"><b>Same budget</b><span>At most N tests each. Fewer is better: each test costs robot time and consumables.</span></div>
+      <div class="c"><b>One answer</b><span>Each contestant names one recipe. We check its true angle (on target = 70.4–73.6°) and re-test it 5× on a fresh setup.</span></div>
+      <div class="c"><b>Score</b><span>100 × √[(1 − |angle − 72|/50) × (1 − total/2)] — the RAISE desirability. 0 if the answer misses the target.</span></div>
+      <div class="c"><b>Many repeats</b><span>One comparison is anecdotal; the repeated-study page runs dozens and reports averages with 95% intervals.</span></div>
+    </div>
+    <p>Contestants: <b>Random</b>, <b>OFAT</b> (one factor at a time, like a person), two <b>Bayesian optimisers</b> (the RAISE method and an
+      improved variant), and <b>LLM scientists</b> (DeepSeek, GPT, Gemini, Qwen, Kimi, GLM, Claude…) that read results, reason, and choose the next test.</p>
+  </section>
+</main>
+<div id="tooltip"></div>
+<script src="static/pyshim.js"></script>
+<script src="static/anim.js"></script>
+<script src="static/about.js"></script>
+</body>
+</html>

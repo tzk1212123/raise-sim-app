@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAISE Simulator — Agentic Lab</title>
+<link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">◐</div>
+    <div>
+      <div class="title">RAISE Simulator</div>
+      <div class="subtitle">SDS 94% + Tween 20 · target static contact angle 72° · minimise surfactant</div>
+    </div>
+  </div>
+  <a href="./" style="text-decoration:none;color:#6b7385;font-size:13px">← Comparison</a>
+  <a href="tour.html" class="primary" style="text-decoration:none;padding:8px 14px;border-radius:8px;background:#1f9d6b;color:#fff;font-weight:600">▶ Guided tour</a>
+  <nav id="tabs">
+    <button data-tab="lab" class="active">Lab bench</button>
+    <button data-tab="surface">Response surface</button>
+    <button data-tab="campaign">Autonomous campaign</button>
+    <button data-tab="bench">Benchmark</button>
+    <button data-tab="about">How it works</button>
+  </nav>
+  <div class="rig">
+    <label>Surface <select id="rig-surface"></select></label>
+    <label>Seed <input id="rig-seed" type="number" value="0" min="0" style="width:4em"></label>
+    <label>Noise <select id="rig-noise"><option value="1">realistic</option><option value="0">off</option><option value="2">2×</option></select></label>
+    <button id="rig-reset" class="ghost">New rig</button>
+  </div>
+</header>
+
+<main>
+<!-- ============ LAB BENCH ============ -->
+<section id="tab-lab" class="tab active">
+  <div class="grid2">
+    <div class="card">
+      <div class="card-h"><h2>Deck</h2><span class="muted" id="deck-clock"></span></div>
+      <svg id="deck" viewBox="0 0 760 470"></svg>
+      <div class="legend" id="deck-legend"></div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-h"><h2>Run one formulation</h2></div>
+        <div class="row">
+          <label>SDS 94% (% w/v)<select id="in-sds"></select></label>
+          <label>Tween 20 (% w/v)<select id="in-tween"></select></label>
+          <button id="btn-run" class="primary">Run ▶</button>
+        </div>
+        <div id="run-result" class="result empty">Pick a composition and press Run. The robot will dispense, mix, place 3 droplets, image and analyse them.</div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2>Protocol log</h2><span class="muted">device actions of the last run (simulated time)</span></div>
+        <div id="steps" class="steps"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SURFACE ============ -->
+<section id="tab-surface" class="tab">
+  <div class="grid2 wide-left">
+    <div class="card">
+      <div class="card-h"><h2>Formulation space</h2>
+        <label class="switch"><input type="checkbox" id="reveal"> reveal hidden ground truth</label></div>
+      <svg id="surface" viewBox="0 0 820 470"></svg>
+      <div class="legend" id="surface-legend"></div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h2>Reading this map</h2>
+        <ul class="explain">
+          <li>Each cell is one allowed formulation (0.04 % grid, 15 × 30 = 450).</li>
+          <li><b>Planners never see the colours.</b> They only see measured droplets (circles).</li>
+          <li>Outlined cells: truly "good" formulations (true angle in the 70.39–73.61° window and desirability ≥ 0.90). ★ the best of them.</li>
+          <li>SDS 94% alone wets strongly (~61°); Tween pushes the angle <i>up</i> towards ~75°. The 72° target is an iso-line.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Cell inspector</h2>
+        <div id="inspect" class="muted">Hover a cell.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CAMPAIGN ============ -->
+<section id="tab-campaign" class="tab">
+  <div class="card controls">
+    <label>Planner <select id="c-planner"></select></label>
+    <label>Budget <input id="c-budget" type="number" value="15" min="3" max="90" style="width:4.5em"></label>
+    <label>Initial random <input id="c-init" type="number" value="3" min="1" max="10" style="width:4em"></label>
+    <label>Seed <input id="c-seed" type="number" value="0" min="0" style="width:4em"></label>
+    <label>Playback <select id="c-delay"><option value="1.2">slow</option><option value="0.6" selected>normal</option><option value="0.15">fast</option><option value="0">instant</option></select></label>
+    <button id="c-start" class="primary">Start campaign ▶</button>
+    <button id="c-stop" class="ghost">Stop ■</button>
+    <span id="c-state" class="pill">idle</span>
+    <div id="c-desc" class="muted desc"></div>
+  </div>
+  <div class="grid3">
+    <div class="card span2">
+      <div class="card-h"><h2>Where the planner looked</h2><label class="switch"><input type="checkbox" id="c-reveal"> show ground truth</label></div>
+      <svg id="c-map" viewBox="0 0 820 470"></svg>
+    </div>
+    <div class="card">
+      <h2>Outcome</h2>
+      <div id="c-outcome" class="muted">Run a campaign. When it ends, the recommendation is re-tested in 5 fresh experiments on a fresh rig.</div>
+    </div>
+    <div class="card">
+      <h2>Measured angle per experiment</h2>
+      <svg id="c-angle" viewBox="0 0 520 260"></svg>
+    </div>
+    <div class="card">
+      <h2>Best desirability so far</h2>
+      <svg id="c-best" viewBox="0 0 520 260"></svg>
+    </div>
+    <div class="card">
+      <h2>Agent reasoning <span class="muted">(LLM planners)</span></h2>
+      <div id="c-thoughts" class="thoughts muted">Only LLM planners write their hypotheses here.</div>
+    </div>
+    <div class="card span3">
+      <h2>Experiment log</h2>
+      <div class="tablewrap"><table id="c-table"><thead><tr><th>#</th><th>source</th><th>SDS</th><th>Tween</th><th>total</th><th>droplets (°)</th><th>mean ± sd</th><th>D</th><th>status</th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BENCHMARK ============ -->
+<section id="tab-bench" class="tab">
+  <div class="card">
+    <div class="card-h"><h2>Benchmark results</h2><select id="b-select"></select></div>
+    <p class="muted">Headline = delivered performance: the recommended formulation re-tested on a fresh rig. Regret = best achievable in-window desirability minus the recommendation's true desirability (0 if it misses the window).</p>
+    <div class="grid2">
+      <svg id="b-hit" viewBox="0 0 560 300"></svg>
+      <svg id="b-regret" viewBox="0 0 560 300"></svg>
+    </div>
+    <div class="tablewrap"><table id="b-table"></table></div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="tab-about" class="tab">
+  <div class="card">
+    <h2>Architecture</h2>
+    <div class="pipeline">
+      <div class="layer"><b>Control surfaces</b><span>Python API · CLI · MCP · this dashboard</span></div>
+      <div class="arrow">↓</div>
+      <div class="layer"><b>Experiment API</b><span>run(SDS, Tween) → public JSON record · ground truth logged separately</span></div>
+      <div class="arrow">↓</div>
+      <div class="layer"><b>Protocol (RAISE)</b><span>volumes → water / SDS / Tween → mix 10×100 µL → 3 × 3 µL droplets → camera → wait 10 s → capture → analyse (1 retry)</span></div>
+      <div class="arrow">↓</div>
+      <div class="layer"><b>Devices (MHS-style)</b><span>ot2 · deck · camera-1 · analyser · env — each rejects writes outside its safety envelope</span></div>
+      <div class="arrow">↓</div>
+      <div class="layer hidden-layer"><b>Hidden world</b><span>clock · liquids · consumables · pipetting error · measurement model (stage offsets, noise, outliers, failures) · true contact-angle surface</span></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h2>Outcome model</h2>
+      <ul class="explain">
+        <li>Digitised from the RAISE paper (Fig. 7a, 8d, S4a, Tables 1 &amp; S2); raw data is not public.</li>
+        <li>Model A (physics): Rubingh mixed micelles → competitive adsorption → wetting tension → angle via a calibrated adhesion-tension line. Structure check: recovers SDS 99% CMC 8.9 mM (literature 8.2).</li>
+        <li>Model B: Gaussian-process emulator on the digitised surface (independent cross-check).</li>
+        <li>Surface family: posterior draws of model A, so conclusions must hold across plausible worlds.</li>
+      </ul></div>
+    <div class="card"><h2>Fairness rules</h2>
+      <ul class="explain">
+        <li>Same task, grid, budget and identical initial random experiments for every planner.</li>
+        <li>Planners see only public records; failed detections are missing values, never numbers.</li>
+        <li>Each planner recommends one formulation, which is validated on a fresh rig.</li>
+        <li>LLM ablations: <i>blind</i> (no chemistry names) and <i>permuted</i> (feedback scrambled).</li>
+      </ul></div>
+  </div>
+  <div class="card"><h2>Devices</h2><div id="devices"></div></div>
+</section>
+</main>
+<div id="tooltip"></div>
+<script src="static/pyshim.js"></script>
+<script src="static/app.js"></script>
+</body>
+</html>

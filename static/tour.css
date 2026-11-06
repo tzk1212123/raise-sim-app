@@ -1,0 +1,58 @@
+body.tour { font-size: 16px; }
+body.tour main { max-width: 1280px; margin: 0 auto; padding-bottom: 90px; }
+.dots { display: flex; gap: 8px; margin-left: auto; }
+.dots button { border: 0; background: #e6e9ef; color: var(--muted); border-radius: 99px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
+.dots button.on { background: var(--accent); color: #fff; }
+.ghost-link { color: var(--muted); text-decoration: none; font-size: 13px; }
+.step { display: none; } .step.on { display: block; }
+.lead h1 { font-size: 26px; margin: 8px 0 8px; }
+.lead p { font-size: 16.5px; line-height: 1.6; max-width: 920px; margin: 6px 0; color: #374054; }
+.split { display: grid; grid-template-columns: 1.15fr 1fr; gap: 18px; margin-top: 14px; }
+@media (max-width: 1000px) { .split { grid-template-columns: 1fr; } }
+.center { text-align: center; }
+.angle-readout { display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 4px; }
+#d-angle { font-size: 46px; font-weight: 800; }
+.verdict { font-size: 15px; font-weight: 700; padding: 6px 12px; border-radius: 99px; }
+.verdict.ok { background: #e3f6ee; color: var(--good); } .verdict.flat { background: #e8effc; color: var(--accent); }
+.verdict.round { background: #fff1e0; color: #b2600f; }
+.slider { display: grid; grid-template-columns: 170px 1fr 90px; align-items: center; gap: 12px; margin: 14px 0; }
+.slider input { width: 100%; accent-color: var(--accent); }
+.val { font-weight: 700; text-align: right; }
+.meter { display: grid; grid-template-columns: 170px 1fr 50px; align-items: center; gap: 12px; margin: 12px 0; }
+.bar { height: 16px; background: #eef1f6; border-radius: 99px; overflow: hidden; }
+.bar div { height: 100%; background: var(--accent-2); border-radius: 99px; transition: width .25s; }
+.bar.score div { background: var(--good); }
+.presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.small { font-size: 12.5px; margin-top: 14px; }
+.pipeline-steps { list-style: none; padding: 0; margin: 0 0 14px; display: grid; gap: 8px; }
+.pipeline-steps li { padding: 11px 14px; border-radius: 10px; background: #f3f5f9; color: var(--muted); font-size: 15.5px; transition: all .25s; }
+.pipeline-steps li.now { background: #eaf0fc; color: var(--accent); font-weight: 700; transform: translateX(6px); }
+.pipeline-steps li.done { background: #eef8f3; color: var(--good); }
+.photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.photo { background: #111827; border-radius: 10px; padding: 8px; text-align: center; color: #e5e7eb; }
+.photo svg { height: 110px; }
+.photo .a { font-size: 20px; font-weight: 700; }
+.exp-summary { margin-top: 14px; font-size: 16px; line-height: 1.6; }
+.controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 14px; }
+#lane-pick { display: flex; gap: 12px; flex-wrap: wrap; }
+#lane-pick label { flex-direction: row; align-items: center; gap: 6px; font-size: 14px; color: var(--ink); }
+.lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 14px; }
+.lane { background: #fff; border-radius: 12px; box-shadow: var(--shadow); padding: 12px 14px; }
+.lane h3 { margin: 0 0 4px; font-size: 16px; }
+.lane .sub { color: var(--muted); font-size: 12.5px; min-height: 32px; }
+.lane .nums { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+.lane .num { background: #f6f7fa; border-radius: 8px; padding: 6px 8px; }
+.lane .num .l { font-size: 11.5px; color: var(--muted); } .lane .num .v { font-size: 18px; font-weight: 700; }
+.lane .bubble { margin-top: 8px; background: #f5f0ff; border-radius: 10px; padding: 8px 10px; font-size: 12.5px; line-height: 1.4; max-height: 110px; overflow: auto; color: #3b2a66; }
+.lane .flag { font-weight: 700; }
+.board { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 14px; }
+.score-card { background: #fff; border-radius: 12px; box-shadow: var(--shadow); padding: 16px; position: relative; }
+.score-card .rank { position: absolute; top: 12px; right: 14px; font-size: 28px; }
+.score-card h3 { margin: 0 0 6px; }
+.score-card .big { font-size: 40px; }
+.score-card .line { display: flex; justify-content: space-between; font-size: 14px; padding: 4px 0; border-bottom: 1px dashed var(--line); }
+.score-card .ok { color: var(--good); font-weight: 700; } .score-card .bad { color: var(--bad); font-weight: 700; }
+.tour-nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 22px; background: #fff; border-top: 1px solid var(--line); }
+#step-name { color: var(--muted); }
+.score-card h3 { padding-right: 38px; }

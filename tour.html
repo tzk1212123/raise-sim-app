@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAISE Simulator — Guided tour</title>
+<link rel="stylesheet" href="static/style.css">
+<link rel="stylesheet" href="static/tour.css">
+</head>
+<body class="tour">
+<header>
+  <div class="brand"><div class="logo">◐</div>
+    <div><div class="title">Can an AI run a lab experiment?</div>
+      <div class="subtitle">RAISE simulator · guided tour</div></div></div>
+  <div class="dots" id="dots"></div>
+  <a class="ghost-link" href="./">Comparison dashboard →</a>
+</header>
+
+<main>
+<!-- 1 ─ one droplet -->
+<section class="step" data-title="One droplet">
+  <div class="lead">
+    <h1>1 · What are we measuring?</h1>
+    <p>Put a drop of liquid on a surface and look from the side. The angle between the drop and the surface is the
+      <b>contact angle</b>. Big angle = round bead (water on a non-stick pan). Small angle = flat puddle.</p>
+    <p>We mix two soap-like ingredients into water. <b>SDS</b> makes the drop spread flat; <b>Tween</b> keeps it rounder.
+      The goal: a drop of exactly <b>72°</b>, using <b>as little ingredient as possible</b>.</p>
+  </div>
+  <div class="split">
+    <div class="card center">
+      <svg id="big-drop" viewBox="0 0 520 260"></svg>
+      <div class="angle-readout"><span id="d-angle">—</span><span id="d-verdict" class="verdict"></span></div>
+    </div>
+    <div class="card">
+      <div class="slider"><div><b>SDS</b> <span class="muted">spreads the drop</span></div>
+        <input type="range" id="s-sds" min="1" max="15" value="4"><span id="v-sds" class="val"></span></div>
+      <div class="slider"><div><b>Tween</b> <span class="muted">keeps it round</span></div>
+        <input type="range" id="s-tween" min="1" max="30" value="5"><span id="v-tween" class="val"></span></div>
+      <div class="meter"><div class="muted">ingredient used</div><div class="bar"><div id="m-cost"></div></div></div>
+      <div class="meter"><div class="muted">score (closeness to 72° and thrift)</div><div class="bar score"><div id="m-score"></div></div><b id="v-score"></b></div>
+      <div class="presets">
+        <button class="ghost" data-p="0.60,0.04">mostly SDS</button>
+        <button class="ghost" data-p="0.04,1.20">mostly Tween</button>
+        <button class="ghost" data-p="0.60,1.20">lots of both</button>
+        <button class="ghost" data-p="0.08,0.04">the sweet spot</button>
+      </div>
+      <p class="muted small">Teaching view: this screen peeks at the simulator's hidden "true" answer. The AI never sees this.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2 ─ one experiment -->
+<section class="step" data-title="One experiment">
+  <div class="lead">
+    <h1>2 · How does the robot test one recipe?</h1>
+    <p>In the real lab a pipetting robot (Opentrons OT-2) does this. Every test costs a few minutes, consumables and is
+      slightly noisy, which is why we can't test everything.</p>
+  </div>
+  <div class="split">
+    <div class="card">
+      <ol class="pipeline-steps" id="pipe">
+        <li data-k="water">💧 Add water</li><li data-k="sds">🧴 Add SDS stock</li><li data-k="tween">🧴 Add Tween stock</li>
+        <li data-k="mix">🔄 Mix 10 times</li><li data-k="drop">🩸 Place 3 droplets</li><li data-k="cam">📷 Picks up camera, waits 10 s</li>
+        <li data-k="photo">🖼 Photograph & measure angles</li><li data-k="done">✅ Report the result</li>
+      </ol>
+      <div class="row"><span class="muted" id="exp-recipe"></span><button class="primary" id="exp-run">Run this recipe ▶</button></div>
+    </div>
+    <div class="card">
+      <h2>What the camera sees</h2>
+      <div class="photos" id="photos"><div class="muted">Press "Run".</div></div>
+      <div id="exp-summary" class="exp-summary"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 ─ 450 possibilities -->
+<section class="step" data-title="450 recipes">
+  <div class="lead">
+    <h1>3 · Why not just try everything?</h1>
+    <p>Each ingredient comes in 15 or 30 allowed amounts: <b>450 recipes</b>. At ~3.4 minutes each that is
+      <b>~25 hours</b> of robot time plus a person resetting the deck every 30 recipes. A good strategy finds a great
+      recipe in <b>10–15 tests</b>.</p>
+    <p>The catch: the strategy only learns what it tests. The map below is blank to it.</p>
+  </div>
+  <div class="card">
+    <div class="card-h"><span class="muted">each square = one recipe · left→right more Tween · bottom→top more SDS</span>
+      <button class="primary" id="reveal-btn">Reveal the hidden answer</button></div>
+    <svg id="space" viewBox="0 0 820 300"></svg>
+    <div class="legend" id="space-legend"></div>
+  </div>
+</section>
+
+<!-- 4 ─ race -->
+<section class="step" data-title="The race">
+  <div class="lead">
+    <h1>4 · The race: who finds a good recipe with the fewest tests?</h1>
+    <p>Every contestant gets the <b>same simulated lab</b>, the <b>same 3 random starter tests</b> and the same budget.
+      They only see their own measurements.</p>
+  </div>
+  <div class="card controls">
+    <div id="lane-pick"></div>
+    <label>Budget <input type="number" id="r-budget" value="15" min="5" max="45" style="width:4.5em"></label>
+    <label>Speed <select id="r-delay"><option value="1.0">slow</option><option value="0.5" selected>normal</option><option value="0.1">fast</option></select></label>
+    <button class="primary" id="r-start">Start the race ▶</button>
+    <button class="ghost" id="r-stop">Stop</button>
+  </div>
+  <div class="lanes" id="lanes"></div>
+</section>
+
+<!-- 5 ─ scoreboard -->
+<section class="step" data-title="Scoreboard">
+  <div class="lead">
+    <h1>5 · Scoreboard: does the recommended recipe really work?</h1>
+    <p>A lucky reading is not enough. Each contestant names <b>one</b> recipe, and we re-test it <b>5 times</b> on a fresh
+      setup. Then we compare it to the best recipe that exists.</p>
+  </div>
+  <div id="board" class="board"><div class="card muted">Run the race first (step 4).</div></div>
+</section>
+</main>
+
+<footer class="tour-nav">
+  <button class="ghost" id="prev">← Back</button>
+  <span id="step-name"></span>
+  <button class="primary" id="next">Next →</button>
+</footer>
+<div id="tooltip"></div>
+<script src="static/pyshim.js"></script>
+<script src="static/tour.js"></script>
+</body>
+</html>

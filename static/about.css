@@ -1,0 +1,27 @@
+main.about { max-width: 1180px; margin: 0 auto; padding: 16px 20px 40px; display: flex; flex-direction: column; gap: 16px; }
+.about h2 { font-size: 20px; margin: 2px 0 12px; }
+.about p, .about li { font-size: 14.5px; line-height: 1.6; }
+.toc { display: flex; gap: 10px; flex-wrap: wrap; }
+.toc a { text-decoration: none; color: var(--ink); border: 1px solid var(--line); background: #fff; border-radius: 99px; padding: 6px 14px; font-size: 13px; }
+.two { display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; align-items: start; }
+@media (max-width: 1000px) { .two { grid-template-columns: 1fr; } }
+.drops { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dropcard { border: 1px solid var(--line); border-radius: 12px; padding: 8px; text-align: center; display: flex; flex-direction: column; gap: 2px; }
+.dropcard b { font-size: 20px; } .dropcard span { color: var(--muted); font-size: 12.5px; }
+.dropcard.target { border-color: #1f8a5c; background: #f3f8f4; }
+.steps-list { padding-left: 20px; margin: 0; }
+.steps-list li { margin-bottom: 6px; }
+table.map { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+table.map th { text-align: left; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); padding: 8px; }
+table.map td { vertical-align: top; padding: 10px 8px; border-bottom: 1px solid var(--line); white-space: normal; line-height: 1.5; }
+table.map td:first-child { font-weight: 600; width: 22%; }
+.see { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.see .box { border-radius: 10px; padding: 10px 12px; font-size: 13px; }
+.see .box ul { margin: 6px 0 0; padding-left: 18px; } .see .box li { font-size: 13px; }
+.see .sees { background: #eef4fd; border: 1px solid #cfe0fa; }
+.see .hidden { background: #fbf4ea; border: 1px solid #f0dfc6; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 10px; }
+.cards .c { border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+.cards .c b { font-size: 14px; } .cards .c span { font-size: 13px; color: #55524c; line-height: 1.5; }
+.anim-wrap { margin-top: 10px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fbfaf7; }
+.anim-cap { font-size: 14px; padding: 8px 12px; border-top: 1px solid var(--line); min-height: 34px; }
